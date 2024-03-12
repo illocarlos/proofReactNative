@@ -2,8 +2,10 @@
 import { useState } from 'react'
 import { Text, Pressable, Modal, StyleSheet, SafeAreaView, TextInput, View, ScrollView, Alert } from 'react-native'
 import DatePicker from '@react-native-community/datetimepicker';
+import { uid } from 'uid';
+import dateFormat from "dateformat";
 
-const Formulario = ({ PrimerClick, click, setPaciente, paciente }) => {
+const Formulario = ({ PrimerClick, click, setPaciente, pacientes }) => {
     const [name, setName] = useState("")
     const [email, setEmail] = useState("")
     const [propietary, setPropietary] = useState("")
@@ -55,15 +57,17 @@ onLongPress=>se ejecuta la funcion cuando presionas mas de medio segundo
         }
 
         const nuevoPaciente = {
+            id: uid(16),
             name,
             email,
             age,
             propietary,
             phone,
-            date,
+            date: dateFormat(date, "dd/mm/yy, h:MM"),
             sinto
         }
-        setPaciente([...paciente, nuevoPaciente])
+        console.log('eeeeeee', nuevoPaciente)
+        setPaciente([...pacientes, nuevoPaciente])
         reset()
         PrimerClick()
     }

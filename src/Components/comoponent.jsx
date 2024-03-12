@@ -1,10 +1,18 @@
 import { useState } from 'react';
-import { SafeAreaView, Text, StyleSheet, Pressable, Modal } from 'react-native';
+import {
+    SafeAreaView,
+    Text,
+    StyleSheet,
+    Pressable,
+    FlatList,
+    View
+} from 'react-native';
 import Formulario from './Formulario';
+import Paciente from './Paciente';
 
 const Component = () => {
     const [click, setClick] = useState(false);
-    const [paciente, setPaciente] = useState([])
+    const [pacientes, setPaciente] = useState([])
 
     const PrimerClick = () => {
         const nuevoClick = !click;
@@ -17,15 +25,34 @@ const Component = () => {
         //button para botones 
         //image para imagenes 
         //view se usa como un  div 
-        <SafeAreaView style={styles.container} >
+        < SafeAreaView style={styles.container} >
             {/* llamamos las clases como styles  */}
-            <Text style={styles.title}>administrador de citas
+
+            < View style={styles.containerInAdmin} >
                 {/* podemos meter textos dentro de textos y clases dentro de clases Button
         es como sass en ese aspecto y si queremos llamar una clase dentro de otra se llama como si fuera un objeto en js
-        */}
-                <Text style={styles.title.name}> Veterinaria </Text>
-            </Text>
+    */}
 
+                <Text style={styles.title}> consultas citas</Text>
+                <Text style={[styles.title.name, styles.title]}>   Veterinaria </Text>
+
+
+                {
+                    pacientes.length === 0 ?
+                        <Text style={styles.pacienteText} >sin pacientes, por favor añada uno.</Text> :
+                        <FlatList
+                            style={styles.list}
+                            data={pacientes}
+                            key={(item) => item.id}
+                            renderItem={(item) => {
+                                return (
+                                    <Paciente
+                                        item={item} />
+                                )
+                            }}
+                        />
+                }
+            </View >
 
             <Pressable style={styles.button} onPress={PrimerClick} >
                 <Text style={styles.button.text}>añadir cita</Text>
@@ -35,11 +62,11 @@ const Component = () => {
                 click={click}
                 PrimerClick={PrimerClick}
                 setPaciente={setPaciente}
-                paciente={paciente}
+                pacientes={pacientes}
             />
 
 
-        </SafeAreaView>
+        </SafeAreaView >
     );
 }
 
@@ -51,14 +78,17 @@ const Component = () => {
 const styles = StyleSheet.create({
     // aqui tenemos una clase css dentro de otra
     title: {
-        backgroundColor: '#B7DFF1',
         textAlign: 'center',
         textTransform: 'uppercase',
-        flex: 1,
         fontSize: 30,
         name: {
-            color: 'red'
+            color: 'purple',
+            fontWeight: '900',
         }
+    },
+    containerInAdmin: {
+        backgroundColor: '#B7DFF1',
+        flex: 1,
     },
     container: {
         backgroundColor: '#69C7F0',
@@ -78,6 +108,15 @@ const styles = StyleSheet.create({
         height: 600,
         marginTop: 20,
     },
+    pacienteText: {
+        fontSize: 26,
+        marginVertical: 25,
+        textAlign: 'center',
+        fontWeight: '600',
+    },
+    list: {
+        marginTop: 50,
 
+    }
 })
 export default Component
