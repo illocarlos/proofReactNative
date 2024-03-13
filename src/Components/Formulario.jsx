@@ -1,28 +1,60 @@
 
-import { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Text, Pressable, Modal, StyleSheet, SafeAreaView, TextInput, View, ScrollView, Alert } from 'react-native'
 import DatePicker from '@react-native-community/datetimepicker';
 import { uid } from 'uid';
-import dateFormat from "dateformat";
 
-const Formulario = ({ PrimerClick, click, setPaciente, pacientes }) => {
+const Formulario = ({
+    PrimerClick,
+    click,
+    pacientes,
+    setPacientes,
+    paciente: pacienteObj,
+    setPaciente: setPacienteApp
+}) => {
+
+    // la usamos para verificar si es edit o no
+    const [id, setId] = useState("")
+
     const [name, setName] = useState("")
     const [email, setEmail] = useState("")
     const [propietary, setPropietary] = useState("")
-    const [age, setAge] = useState(null)
     const [phone, setPhone] = useState("")
     const [date, setDate] = useState(new Date());
     const [sinto, setSinto] = useState("")
+
+
 
     const reset = () => {
         setName("")
         setEmail("")
         setPropietary("")
-        setAge(null)
         setPhone("")
         setDate(new Date())
         setSinto("")
     }
+
+    // la funcion useEffect de react ejecuta lo interno automaticamente cuando el componente esta listo
+    //es perfecto para recibir informacion de api o pasar informacion al localstorage
+    //tambien para observar cambios de valores en la aplicacion
+    //es decir le pasamos una dependencia y observe los cambios a tiempo real de esa dependencia
+    //y asi poder actualizarla
+    useEffect(() => {
+        if (Object.keys(pacienteObj).length > 0) {
+            setName(pacienteObj.name)
+            setDate(pacienteObj.date)
+            setId(pacienteObj.id)
+            setEmail(pacienteObj.email)
+            setPropietary(pacienteObj.propietary)
+            setPhone(pacienteObj.phone)
+            setSinto(pacienteObj.sinto)
+        }
+    }, [pacienteObj])//este arreglo si lo pasamos vacio el useeffect se activa por defecto una vez
+    //cuando montamos el componente si le pasamos valores ese use efect se activara cada vez que ese valor cambie
+    //en este caso debemos pasarle el objeto de pacienrte editado ya que ese objeto cambiara una vez pulsemos editar
+    //y se llenara eso activara el useeffect de forma segura deberemos colocar objetos o vloresa que queremos que reaccionen
+
+
     {/* este es un componente buttom es de react native  el texto de el buton se pasa como propr title es lo que saldra dentro del button 
   a diferencia de react que usamos onclick como evento para pasarle cierta funcionalidad usamos inPress en reactnative
   asi llamariamos a Button
@@ -41,9 +73,9 @@ onLongPress=>se ejecuta la funcion cuando presionas mas de medio segundo
 
     const handleSubmit = () => {
         //validacion de formulario
-        if ([name, email, age, propietary, phone, date, sinto].includes('')) {
+        if ([name, email, propietary, phone, date, sinto].includes('')) {
             // ALERT es un componente de react native  y le pasamos 3 parametros 
-            //1 el encabezado el mensaje generico 
+            //1 el encbezado el mensaje generico 
             //2 el cuerpo  lo que queremos que el cliente vea para informarle de por que ese encabezado
             //3 el texto del boton lo que saldra en el boton para salir de esa alerta o confirmar esa alerta
             Alert.alert(
@@ -57,21 +89,42 @@ onLongPress=>se ejecuta la funcion cuando presionas mas de medio segundo
         }
 
         const nuevoPaciente = {
-            id: uid(16),
             name,
             email,
-            age,
             propietary,
             phone,
-            date: dateFormat(date, "dd/mm/yy, h:MM"),
+            date,
             sinto
         }
-        console.log('eeeeeee', nuevoPaciente)
-        setPaciente([...pacientes, nuevoPaciente])
-        reset()
+
+        //revisar nueva cita o editar
+        if (id) {
+            // Editando
+            nuevoPaciente.id = id
+
+            const pacientesActualizados = pacientes.map(pacienteState => pacienteState.id === nuevoPaciente.id ? nuevoPaciente : pacienteState)
+            setPacientes(pacientesActualizados)
+            setPacienteApp({})
+
+        } else {
+            // nuevo paciente aqui le generamos el id y lo metemos en el array de pacientes
+            nuevoPaciente.id = uid(16)
+            setPacientes([...pacientes, nuevoPaciente])
+        }
+
         PrimerClick()
+        reset()
     }
 
+
+
+
+
+    //funciuon de fechaaaa
+    const handleChange = (event, selectedDate) => {
+        const currentDate = selectedDate || date;
+        setDate(currentDate);
+    }
     return (
 
         <Modal
@@ -129,17 +182,7 @@ onLongPress=>se ejecuta la funcion cuando presionas mas de medio segundo
                             placeholderTextColor={'#666'}
                         />
                     </View>
-                    <View style={styles.formulary} >
-                        <Text style={styles.formulary.text}> edad</Text>
-                        <TextInput
-                            value={age}
-                            onChangeText={setAge}
-                            placeholder='coloca la edad del paciente'
-                            style={styles.formulary.input}
-                            keyboardType='numeric'
-                            placeholderTextColor={'#666'}
-                        />
-                    </View>
+
                     <View style={styles.formulary} >
                         <Text style={styles.formulary.text}> telefono</Text>
                         <TextInput
@@ -161,9 +204,12 @@ onLongPress=>se ejecuta la funcion cuando presionas mas de medio segundo
                          */}
                         <DatePicker
                             value={date}
-                            onDateChange={setDate}
-                            display='spinner'
+                            onChange={handleChange}
                             mode='datetime'
+                            display='spinner'
+                            textColor='black'
+                            themeVariant="dark"
+                            is24Hour={true}
                         />
                     </View>
 
@@ -172,7 +218,6 @@ onLongPress=>se ejecuta la funcion cuando presionas mas de medio segundo
                         <TextInput
                             value={sinto}
                             onChangeText={setSinto}
-                            placeholder=''
                             style={[styles.formulary.input, styles.formulary.textArea]}
                             placeholderTextColor={'#666'}
                             multiline={true}
@@ -204,6 +249,7 @@ const styles = StyleSheet.create({
             borderRadius: 7,
         },
         text: {
+
             color: 'white',
             fontSize: 20,
             fontWeight: '900',
@@ -227,7 +273,6 @@ const styles = StyleSheet.create({
             fontWeight: '900',
         },
         input: {
-            textAlign: 'center',
             padding: 15,
             backgroundColor: '#fff',
             borderRadius: 20,

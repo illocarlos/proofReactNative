@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react'
 import {
     SafeAreaView,
     Text,
@@ -12,11 +12,19 @@ import Paciente from './Paciente';
 
 const Component = () => {
     const [click, setClick] = useState(false);
-    const [pacientes, setPaciente] = useState([])
+    const [pacientes, setPacientes] = useState([])
+    const [paciente, setPaciente] = useState({})
 
+
+    // mostrar modal
     const PrimerClick = () => {
         const nuevoClick = !click;
         setClick(nuevoClick);
+    }
+    //editar paciente le pasamos un paciente en concreto al formulario para asi editarlo
+    const pacienteEditar = id => {
+        const pacienteEditar = pacientes.filter(paciente => paciente.id === id)
+        setPaciente(pacienteEditar[0])
     }
     return (
         //en react native tenemos elementos limitados los mas populares son :
@@ -34,7 +42,7 @@ const Component = () => {
     */}
 
                 <Text style={styles.title}> consultas citas</Text>
-                <Text style={[styles.title.name, styles.title]}>   Veterinaria </Text>
+                <Text style={[styles.name, styles.title]}>   Veterinaria </Text>
 
 
                 {
@@ -43,11 +51,16 @@ const Component = () => {
                         <FlatList
                             style={styles.list}
                             data={pacientes}
-                            key={(item) => item.id}
-                            renderItem={(item) => {
+                            // me generaba un error ya que por defecto yo uo key para dar valor unicoi
+                            //y en reactnative es keyextractor 
+                            keyExtractor={(item) => item.id}
+                            renderItem={({ item }) => {
                                 return (
                                     <Paciente
-                                        item={item} />
+                                        item={item}
+                                        pacienteEditar={pacienteEditar}
+                                        setShowModal={PrimerClick}
+                                    />
                                 )
                             }}
                         />
@@ -55,7 +68,7 @@ const Component = () => {
             </View >
 
             <Pressable style={styles.button} onPress={PrimerClick} >
-                <Text style={styles.button.text}>añadir cita</Text>
+                <Text style={styles.text}>añadir cita</Text>
             </Pressable>
 
             <Formulario
@@ -63,6 +76,8 @@ const Component = () => {
                 PrimerClick={PrimerClick}
                 setPaciente={setPaciente}
                 pacientes={pacientes}
+                paciente={paciente}
+                setPacientes={setPacientes}
             />
 
 
@@ -81,10 +96,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         textTransform: 'uppercase',
         fontSize: 30,
-        name: {
-            color: 'purple',
-            fontWeight: '900',
-        }
+
     },
     containerInAdmin: {
         backgroundColor: '#B7DFF1',
@@ -94,13 +106,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#69C7F0',
         flex: 1
     },
-    button: {
-        text: {
-            textAlign: 'center',
-            fontSize: 20,
-            textTransform: 'uppercase'
-        }
-    },
+
     tinyLogo: {
         alignSelf: 'center',
         justifyContent: 'center',
@@ -117,6 +123,15 @@ const styles = StyleSheet.create({
     list: {
         marginTop: 50,
 
+    },
+    name: {
+        color: 'purple',
+        fontWeight: '900',
+    },
+    text: {
+        textAlign: 'center',
+        fontSize: 20,
+        textTransform: 'uppercase'
     }
 })
 export default Component
