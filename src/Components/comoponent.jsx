@@ -5,7 +5,8 @@ import {
     StyleSheet,
     Pressable,
     FlatList,
-    View
+    View,
+    Alert
 } from 'react-native';
 import Formulario from './Formulario';
 import Paciente from './Paciente';
@@ -26,6 +27,24 @@ const Component = () => {
         const pacienteEditar = pacientes.filter(paciente => paciente.id === id)
         setPaciente(pacienteEditar[0])
     }
+    const eliminar = id => {
+        Alert.alert(
+            'vas a eliminar un pasiente',
+            '¿estas seguro?',
+            [
+                { text: 'cancelar' },
+                {
+                    text: 'eliminar', onPress: () => {
+                        const pacienteActualizado = pacientes.filter(elm => elm.id !== id)
+                        setPacientes(pacienteActualizado)
+                    }
+                }
+
+            ]
+
+        )
+    }
+
     return (
         //en react native tenemos elementos limitados los mas populares son :
         // SafeAreaView lo que hace es coger las dimensiones de mobile que trae reactnative es para ajustar la aplicacion al NOTCH de iphone
@@ -60,6 +79,7 @@ const Component = () => {
                                         item={item}
                                         pacienteEditar={pacienteEditar}
                                         setShowModal={PrimerClick}
+                                        eliminar={eliminar}
                                     />
                                 )
                             }}

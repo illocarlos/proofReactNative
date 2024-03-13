@@ -112,8 +112,8 @@ onLongPress=>se ejecuta la funcion cuando presionas mas de medio segundo
             setPacientes([...pacientes, nuevoPaciente])
         }
 
-        PrimerClick()
         reset()
+        PrimerClick()
     }
 
 
@@ -142,11 +142,17 @@ onLongPress=>se ejecuta la funcion cuando presionas mas de medio segundo
                     que es inclick aqui es onPress y hay muchas formas de realizar la presion la mas comun es onpress
                  */}
                     <View style={styles.close}>
-                        <Pressable style={styles.close.button} onPress={PrimerClick} >
+                        <Pressable style={styles.close.button} onPress={() => {
+                            PrimerClick(false)
+                            setPacienteApp({})
+                            reset()
+                        }}
+                        >
                             <Text style={styles.close.text}  >X</Text>
                         </Pressable>
                     </View>
-                    <Text style={styles.text}>NUEVA CITA</Text>
+                    <Text style={styles.text}>
+                        {pacienteObj.id ? 'editar paciente' : 'nueva cita'}</Text>
                     {/* entrada para un formulario view se asemeja a un div dentro un text explicando el input
                     y textinput es la manera de generar formularios en react native
                     si colocamos la propr keyboardType le indicamos el tipo de dato que registrara y 
@@ -227,7 +233,9 @@ onLongPress=>se ejecuta la funcion cuando presionas mas de medio segundo
                     <Pressable
                         onPress={handleSubmit}
                         style={styles.formulary.btnenviar} >
-                        <Text style={styles.formulary.btnenviar.text}  >Enviar</Text>
+                        <Text style={styles.formulary.btnenviar.text}  >
+                            {pacienteObj.id ? 'editar' : 'nueva cita'}
+                        </Text>
                     </Pressable>
                 </ScrollView>
             </SafeAreaView>

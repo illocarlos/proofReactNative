@@ -1,13 +1,11 @@
-import { Text, View, StyleSheet, Pressable } from "react-native"
+import { Text, View, StyleSheet, Pressable, Alert } from "react-native"
 import dateFormat from "dateformat"
 
 
 
-const Paciente = ({ item, setShowModal, pacienteEditar }) => {
+const Paciente = ({ item, setShowModal, pacienteEditar, eliminar }) => {
 
-    console.log('editandoooo', item)
     const { name, date, id } = item
-
 
 
     return (
@@ -25,7 +23,12 @@ const Paciente = ({ item, setShowModal, pacienteEditar }) => {
                         }}
                     > editar</Text>
                 </Pressable>
-                <Pressable style={styles.contain.button.btnDeleted}>
+                <Pressable
+                    onLongPress={() => {
+
+                        eliminar(id)
+                    }}
+                    style={styles.contain.button.btnDeleted}>
                     <Text style={styles.contain.button.textDeleted}> eliminar</Text>
                 </Pressable>
             </View>
