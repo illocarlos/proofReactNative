@@ -122,9 +122,12 @@ onLongPress=>se ejecuta la funcion cuando presionas mas de medio segundo
 
     //funciuon de fechaaaa
     const handleChange = (event, selectedDate) => {
+
         const currentDate = selectedDate || date;
         setDate(currentDate);
+
     }
+
     return (
 
         <Modal
@@ -209,7 +212,7 @@ onLongPress=>se ejecuta la funcion cuando presionas mas de medio segundo
                         y mode datetime para que salga fecha y hora
                          */}
                         <DatePicker
-                            value={date}
+                            value={pacienteObj.date ? new Date(pacienteObj.date) : date} // Si pacienteObj.date existe, lo usamos; de lo contrario, usamos date actual
                             onChange={handleChange}
                             mode='datetime'
                             display='spinner'
