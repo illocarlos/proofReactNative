@@ -3,36 +3,58 @@ import dateFormat from "dateformat"
 
 
 
-const Paciente = ({ item, setShowModal, pacienteEditar, eliminar }) => {
+const Paciente = ({
+    item,
+    setShowModal,
+    pacienteEditar,
+    eliminar,
+    setModalPaciente,
+    setPaciente
+}) => {
 
     const { name, date, id } = item
 
 
     return (
-        <View style={styles.contain}>
-            <Text style={styles.contain.h1}>Paciente</Text>
-            <Text style={[styles.contain.h1, styles.contain.namePaciente]}>{name}</Text>
-            <Text>{dateFormat(date, "dd/mm/yy, h:MM ")}</Text>
-            <View style={styles.contain.button}>
-                <Pressable style={styles.contain.button.btnEdit}>
-                    <Text style={styles.contain.button.textEdit}
+
+        <Pressable
+            // en la accion de presionar debemos hacer una arrow funccion 
+            //para que no se muestre automaticamente la modal cuando se abra paciente
+            //si no colocamos arrowfuncion se mostrara sin necesidad de pulsar
+            //y eso no queremos
+            onLongPress={() => {
+                setModalPaciente(true)
+                setPaciente(item)
+
+            }
+            }
+        >
+
+            <View style={styles.contain}>
+                <Text style={styles.contain.h1}>Paciente</Text>
+                <Text style={[styles.contain.h1, styles.contain.namePaciente]}>{name}</Text>
+                <Text>{dateFormat(date, "dd/mm/yy, h:MM ")}</Text>
+                <View style={styles.contain.button}>
+                    <Pressable style={styles.contain.button.btnEdit}>
+                        <Text style={styles.contain.button.textEdit}
+                            onLongPress={() => {
+
+                                setShowModal(true)
+                                pacienteEditar(id)
+                            }}
+                        > editar</Text>
+                    </Pressable>
+                    <Pressable
                         onLongPress={() => {
 
-                            setShowModal(true)
-                            pacienteEditar(id)
+                            eliminar(id)
                         }}
-                    > editar</Text>
-                </Pressable>
-                <Pressable
-                    onLongPress={() => {
-
-                        eliminar(id)
-                    }}
-                    style={styles.contain.button.btnDeleted}>
-                    <Text style={styles.contain.button.textDeleted}> eliminar</Text>
-                </Pressable>
+                        style={styles.contain.button.btnDeleted}>
+                        <Text style={styles.contain.button.textDeleted}> eliminar</Text>
+                    </Pressable>
+                </View>
             </View>
-        </View>
+        </Pressable>
     )
 }
 

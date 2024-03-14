@@ -6,22 +6,31 @@ import {
     Pressable,
     FlatList,
     View,
-    Alert
+    Alert,
 } from 'react-native';
 import Formulario from './Formulario';
 import Paciente from './Paciente';
+import Informacion from './InformacionPaciente'
 
 const Component = () => {
     const [click, setClick] = useState(false);
     const [pacientes, setPacientes] = useState([])
     const [paciente, setPaciente] = useState({})
-
+    const [modalPaciente, setModalPaciente] = useState(false)
 
     // mostrar modal
     const PrimerClick = () => {
         const nuevoClick = !click;
         setClick(nuevoClick);
     }
+
+    //mostrar modal paciente
+    // const modalInfo = () => {
+    //     const nuevoClick = !modalPaciente;
+    //     setModalPaciente(nuevoClick);
+    //     console.log('la modalllll', modalPaciente)
+    // }
+
     //editar paciente le pasamos un paciente en concreto al formulario para asi editarlo
     const pacienteEditar = id => {
         const pacienteEditar = pacientes.filter(paciente => paciente.id === id)
@@ -80,6 +89,8 @@ const Component = () => {
                                         pacienteEditar={pacienteEditar}
                                         setShowModal={PrimerClick}
                                         eliminar={eliminar}
+                                        setModalPaciente={setModalPaciente}
+                                        setPaciente={setPaciente}
                                     />
                                 )
                             }}
@@ -87,20 +98,31 @@ const Component = () => {
                 }
             </View >
 
+
+
             <Pressable style={styles.button} onPress={PrimerClick} >
                 <Text style={styles.text}>añadir cita</Text>
             </Pressable>
 
-            <Formulario
-                click={click}
-                PrimerClick={PrimerClick}
+            {click && (
+
+                <Formulario
+                    click={click}
+                    PrimerClick={PrimerClick}
+                    setPaciente={setPaciente}
+                    pacientes={pacientes}
+                    paciente={paciente}
+                    setPacientes={setPacientes}
+                    setModalPaciente={setModalPaciente}
+                />
+            )}
+
+            <Informacion
                 setPaciente={setPaciente}
-                pacientes={pacientes}
+                modalPaciente={modalPaciente}
+                setModalPaciente={setModalPaciente}
                 paciente={paciente}
-                setPacientes={setPacientes}
             />
-
-
         </SafeAreaView >
     );
 }
