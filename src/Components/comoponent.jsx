@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
     SafeAreaView,
     Text,
@@ -11,12 +11,44 @@ import {
 import Formulario from './Formulario';
 import Paciente from './Paciente';
 import Informacion from './InformacionPaciente'
+// para tener persistencia y poder guardarlo en el localstorage debemos isntalar esta dependencia 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Component = () => {
     const [click, setClick] = useState(false);
     const [pacientes, setPacientes] = useState([])
     const [paciente, setPaciente] = useState({})
     const [modalPaciente, setModalPaciente] = useState(false)
+
+
+
+    // esto son los useaEfffect que tenemos que usar para que tenga persisstencia la informacion
+    useEffect(() => {
+        const loadPacientes = async () => {
+            try {
+                const storedPacientes = await AsyncStorage.getItem('pacientes');
+                if (storedPacientes !== null) {
+                    setPacientes(JSON.parse(storedPacientes));
+                }
+            } catch (error) {
+                console.error('Error loading pacientes from AsyncStorage:', error);
+            }
+        };
+
+        loadPacientes();
+    }, []);
+
+    useEffect(() => {
+        const savePacientes = async () => {
+            try {
+                await AsyncStorage.setItem('pacientes', JSON.stringify(pacientes));
+            } catch (error) {
+                console.error('Error saving pacientes to AsyncStorage:', error);
+            }
+        };
+
+        savePacientes();
+    }, [pacientes]);
 
     // mostrar modal
     const PrimerClick = () => {
@@ -104,6 +136,7 @@ const Component = () => {
                 <Text style={styles.text}>añadir cita</Text>
             </Pressable>
 
+
             {click && (
 
                 <Formulario
@@ -173,7 +206,8 @@ const styles = StyleSheet.create({
     text: {
         textAlign: 'center',
         fontSize: 20,
-        textTransform: 'uppercase'
+        textTransform: 'uppercase',
+        fontWeight: '900'
     }
 })
 export default Component

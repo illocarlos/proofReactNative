@@ -33,9 +33,12 @@ const Paciente = ({
             <View style={styles.contain}>
                 <Text style={styles.contain.h1}>Paciente</Text>
                 <Text style={[styles.contain.h1, styles.contain.namePaciente]}>{name}</Text>
-                <Text>{dateFormat(date, "dd/mm/yy, h:MM ")}</Text>
+
+                <Text style={styles.cita}>cita</Text>
+                <Text style={styles.date}>{dateFormat(date, "dd/mm/yy, h:MM ")}</Text>
                 <View style={styles.contain.button}>
                     <Pressable style={styles.contain.button.btnEdit}>
+
                         <Text style={styles.contain.button.textEdit}
                             onLongPress={() => {
 
@@ -100,6 +103,15 @@ const styles = StyleSheet.create({
                 fontWeight: '900'
             }
         }
+    },
+    cita: {
+        marginTop: 20,
+        textAlign: 'center',
+        fontWeight: '900'
+    },
+    date: {
+        textAlign: 'center',
+        fontWeight: '900'
     }
 })
 export default Paciente
